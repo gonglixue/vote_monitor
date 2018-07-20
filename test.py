@@ -1,10 +1,10 @@
 
-import urllib.request
-import urllib.parse
-import re
-import http.cookiejar
-import requests
-from bs4 import BeautifulSoup
+# import urllib.request
+# import urllib.parse
+# import re
+# import http.cookiejar
+# import requests
+# from bs4 import BeautifulSoup
 from datetime import datetime
 import json
 import requests
