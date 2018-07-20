@@ -21,6 +21,9 @@ class FemaleList(object):
 
     def _parse_json_dict(self, json_dict):
         all_cards_list = json_dict["data"]["cards"]
+        if len(all_cards_list) < 2:
+            print("response %s" % json_dict["ok"])
+            return
         # print(self.current_time.strftime("%b-%d %H:%M:%S"), " 实时票数监控")
         # each 52-type card has 2 person
         female_card_list = all_cards_list[1]["card_group"]
@@ -48,6 +51,18 @@ class App(object):
 
     def _request(self):
         response = requests.get(self.request_url)
+        if not response.ok:
+            print("****** response is not ok ********", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            print(response.headers)
+            print(response.text)
+            return None, None
+
+        if not response.status_code == 200:
+            print("****** response is not ok ********", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            print(response.headers)
+            print(response.text)
+        return None, None
+
         json_dict = json.loads(response.text)
         female_list_obj = FemaleList(json_dict=json_dict, current_time=datetime.now())
 
@@ -65,7 +80,8 @@ class App(object):
     def request_loop(self, delta_seconds=30):
         while True:
             female_list, date_time = self._request()
-            self._insert_list_to_db(female_list, date_time)
+            if female_list is not None:
+                self._insert_list_to_db(female_list, date_time)
 
             time.sleep(delta_seconds)
 
