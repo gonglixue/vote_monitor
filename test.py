@@ -52,13 +52,13 @@ class App(object):
     def _request(self):
         response = requests.get(self.request_url)
         if not response.ok:
-            print("****** response is not ok ********", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            print("****** response is not ok ******** ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             print(response.headers)
             print(response.text)
             return None, None
 
         if not response.status_code == 200:
-            print("****** response is not ok ********", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            print("****** response is not ok ******** ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             print(response.headers)
             print(response.text)
         return None, None
@@ -82,6 +82,7 @@ class App(object):
             female_list, date_time = self._request()
             if female_list is not None:
                 self._insert_list_to_db(female_list, date_time)
+                print("======== finish a request ========= ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
             time.sleep(delta_seconds)
 
