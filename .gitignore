@@ -1,0 +1,7 @@
+.idea/
+parse_json.json
+response
+response.json
+*.db
+__pycache__/
+*.html
