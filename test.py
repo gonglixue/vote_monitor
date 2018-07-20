@@ -58,16 +58,22 @@ class App(object):
 
     def _request(self):
         response = requests.get(self.request_url)
+        current_time = datetime.now()
+        time_str = current_time.strftime("%Y-%m-%d %H:%M:%S")
         if not response.ok:
-            print("****** response is not ok ******** ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            print("****** response is not ok ******** ", time_str)
             print(response.headers)
-            print(response.text)
+            # print(response.text)
+            with open("logs/failed_%s.json" % (str(time_str)), "w")  as f:
+                f.write(response.text)
             return None, None
 
         if not response.status_code == 200:
             print("****** response is not ok ******** ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             print(response.headers)
-            print(response.text)
+            # print(response.text)
+            with open("logs/failed_%s.json" % (str(time_str)), "w")  as f:
+                f.write(response.text)
             return None, None
 
         json_dict = json.loads(response.text)
@@ -89,7 +95,7 @@ class App(object):
             female_list, date_time = self._request()
             if female_list is not None:
                 self._insert_list_to_db(female_list, date_time)
-                print("======== finish a request ========= ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                print("======== finish a request ========= ", date_time.strftime("%Y-%m-%d %H:%M:%S"))
 
             time.sleep(delta_seconds)
 
