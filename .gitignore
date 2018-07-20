@@ -5,3 +5,4 @@ response.json
 *.db
 __pycache__/
 *.html
+logs/

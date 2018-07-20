@@ -10,6 +10,8 @@ import json
 import requests
 import time
 from vote_db import DB
+import logging
+from logging.handlers import RotatingFileHandler
 
 
 class FemaleList(object):
@@ -43,39 +45,56 @@ class FemaleList(object):
                 self.femal_list.append({"title": person_item["title"], "vote":person_item["price2"]})
 
 
-def get_json_data_from_file(file_path):
-    with open("response.json", "r") as f:
-        json_txt = f.read()
-        json_obj = json.loads(json_txt)
-        print(json_obj["ok"])
 
-        return json_obj
 
 class App(object):
     def __init__(self, request_url, db_name):
         self.request_url = request_url
         self.db = DB(db_name)
+        self._init_app_db("./logs/db_log.txt")
+
+    def _init_app_db(self, log_file_path):
+        logging.getLogger().setLevel(logging.DEBUG)
+        console = logging.StreamHandler()
+        console.setLevel(logging.DEBUG)
+
+        formatter = logging.Formatter('%(asctime)s %(filename)s [line:%(lineno)d] %(levelname)s %(message)s')
+        console.setFormatter(formatter)
+
+        logging.getLogger().addHandler(console)
+
+        # add log ratate
+        Rthandler = RotatingFileHandler(log_file_path, maxBytes=10 * 1024 * 1024, backupCount=100, encoding='utf-8')
+        Rthandler.setLevel(logging.INFO)
+        Rthandler.setFormatter(formatter)
+        logging.getLogger().addHandler(Rthandler)
 
     def _request(self):
-        response = requests.get(self.request_url)
+        try:
+            response = requests.get(self.request_url)
+        except:
+            logging.error("request error")
+            return None, None
+
         current_time = datetime.now()
         time_str = current_time.strftime("%Y-%m-%d %H:%M:%S")
         if not response.ok:
-            print("****** response is not ok ******** ", time_str)
-            print(response.headers)
+            logging.debug("response is not ok at %s" % time_str)
+            # print(response.headers)
             # print(response.text)
             with open("logs/failed_%s.json" % (str(time_str)), "w")  as f:
                 f.write(response.text)
             return None, None
 
         if not response.status_code == 200:
-            print("****** response is not ok ******** ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            print(response.headers)
+            logging.debug("response status_code: %d at %s" % (response.status_code, time_str))
+            # print(response.headers)
             # print(response.text)
             with open("logs/failed_%s.json" % (str(time_str)), "w")  as f:
                 f.write(response.text)
             return None, None
 
+        logging.info("request ok at %s" % time_str)
         json_dict = json.loads(response.text)
         female_list_obj = FemaleList(json_dict=json_dict, current_time=datetime.now())
 
@@ -96,6 +115,8 @@ class App(object):
             if female_list is not None:
                 self._insert_list_to_db(female_list, date_time)
                 print("======== finish a request ========= ", date_time.strftime("%Y-%m-%d %H:%M:%S"))
+            else:
+                logging.debug("female list is none at %s" % (date_time.strftime("%Y-%m-%d %H:%M:%S")))
 
             time.sleep(delta_seconds)
 

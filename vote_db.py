@@ -17,7 +17,7 @@ def init_db(db_name):
 
     print("create table successfully!")
     conn.commit()
-    # conn.close()
+    conn.close()
 
 class DB(object):
     def __init__(self, db_addr):
@@ -66,23 +66,19 @@ class DB(object):
         self.conn.commit()
 
 
-
-
-
-
-
-
 def test():
-    db = DB('test.db')
-    db.insert('吴宣仪', 2000, datetime.datetime.now())
+    db = DB('asia_vote.db')
+    # db.insert('吴宣仪', 2000, datetime.datetime.now())
 
-    db.select_recent_record_by_name("吴宣仪")
-    db.exist_table('log')
+    records = db.select_recent_record_by_name("吴宣仪")
+    for item in records:
+        print(item[0], item[1])
+    # db.exist_table('log')
     db.close_db()
 
 if __name__ == "__main__":
-    # test()
+    test()
     # init_db('asia_vote.db')
-    mydict = {"a": 1, "b": [2, 3]}
-    with open("fail.txt", "w") as f:
-        f.write(str(mydict))
+    # mydict = {"a": 1, "b": [2, 3]}
+    # with open("fail.txt", "w") as f:
+    #     f.write(str(mydict))
