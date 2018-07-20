@@ -21,12 +21,19 @@ class FemaleList(object):
 
     def _parse_json_dict(self, json_dict):
         all_cards_list = json_dict["data"]["cards"]
-        if len(all_cards_list) < 2:
+        # print(all_cards_list)
+        if len(all_cards_list) < 3:
             print("response %s" % json_dict["ok"])
             return
+
+        try:
+            female_card_list = all_cards_list[1]["card_group"]
+        except Exception:
+            with open("faile.json", "w") as f:
+                f.write(str(json_dict))
+
         # print(self.current_time.strftime("%b-%d %H:%M:%S"), " 实时票数监控")
         # each 52-type card has 2 person
-        female_card_list = all_cards_list[1]["card_group"]
         for card in female_card_list:
             if card["card_type"] != 52:
                 continue
@@ -61,7 +68,7 @@ class App(object):
             print("****** response is not ok ******** ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             print(response.headers)
             print(response.text)
-        return None, None
+            return None, None
 
         json_dict = json.loads(response.text)
         female_list_obj = FemaleList(json_dict=json_dict, current_time=datetime.now())

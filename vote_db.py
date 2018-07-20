@@ -82,4 +82,7 @@ def test():
 
 if __name__ == "__main__":
     # test()
-    init_db('asia_vote.db')
+    # init_db('asia_vote.db')
+    mydict = {"a": 1, "b": [2, 3]}
+    with open("fail.txt", "w") as f:
+        f.write(str(mydict))
