@@ -71,8 +71,11 @@ def test():
     # db.insert('吴宣仪', 2000, datetime.datetime.now())
 
     records = db.select_recent_record_by_name("吴宣仪")
-    for item in records:
-        print(item[0], item[1])
+    # for item in records:
+    #     # tuple
+    #     print(item[0], item[1])
+    item = records.fetchall()[0]    # return list
+    print(item)
     # db.exist_table('log')
     db.close_db()
 
