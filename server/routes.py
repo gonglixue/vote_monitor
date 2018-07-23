@@ -6,6 +6,7 @@ from flask import make_response
 from flask import request
 from flask import jsonify
 from flask import Response
+from flask import render_template
 import json
 
 from server.server_db import ServerDB
@@ -17,7 +18,7 @@ print("db path: ", db_path)
 
 @app.route('/')
 def main_page():
-    return 'hello world'
+    return render_template("index.html")
 
 
 @app.route('/last_minutes', methods=['GET'])
