@@ -140,7 +140,7 @@ def test():
     for ind in range(counts):
         item_1 = inc_results_1[ind]
         item_2 = inc_results_2[ind]
-        print('吴宣仪: %s %d票（涨幅:%d/hour）\t 周洁琼:%s %d票（涨幅:%d/hour）' %
+        print('吴宣仪: %s %d票（涨幅:%d/hour）\t\t 周洁琼:%s %d票（涨幅:%d/hour）' %
               (item_1[0], item_1[1], item_1[2], item_2[0], item_2[1], item_2[2]))
 
     # for item in inc_results:
