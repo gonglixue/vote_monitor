@@ -116,7 +116,7 @@ class App(object):
                 self._insert_list_to_db(female_list, date_time)
                 print("======== finish a request ========= ", date_time.strftime("%Y-%m-%d %H:%M:%S"))
             else:
-                logging.debug("female list is none at %s" % (date_time.strftime("%Y-%m-%d %H:%M:%S")))
+                logging.debug("female list is none at %s" % (datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
             time.sleep(delta_seconds)
 

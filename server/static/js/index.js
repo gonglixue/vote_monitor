@@ -41,6 +41,7 @@ function render_vote_data(list_data)
 
 function build_inc_chart(data_list)
 {
+    console.log(data_list)
     var svg = d3.select("#inc-chart"),
         margin = {top:20, right:80, bottom:30, left:50},
         width = svg.attr("width") - margin.left - margin.right,
@@ -53,11 +54,11 @@ function build_inc_chart(data_list)
 
     var line = d3.line()
         .curve(d3.curveBasis)
-        .x(function(d){ return x(parseTime(d[0])); })
-        .y(function(d){ return y(d[2]); });
+        .x(function(d){ console.log("x", parseTime(d[0]), x(parseTime(d[0]))); return x(parseTime(d[0])); })
+        .y(function(d){ console.log("y", d[2]); return y(d[2]); });
 
     var parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S")
-    x.domain(d3.extent(data_list, function(d) { return d[0]; }));   // d3.extent: return the min/max using natural order
+    x.domain(d3.extent(data_list, function(d) { return parseTime(d[0]); }));   // d3.extent: return the min/max using natural order
     console.log(d3.extent(data_list, function(d) { return d[0]; }))
     y.domain([
         d3.min(data_list, function(item) { return item[2]; }),  // min increment
