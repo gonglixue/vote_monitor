@@ -39,13 +39,52 @@ function render_vote_data(list_data)
     }
 }
 
-function build_inc_chart()
+function build_inc_chart(data_list)
 {
-    var svg = d3.select("inc-chart"),
+    var svg = d3.select("#inc-chart"),
         margin = {top:20, right:80, bottom:30, left:50},
         width = svg.attr("width") - margin.left - margin.right,
         height = svg.attr("height") - margin.top - margin.bottom,
-        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top)
+        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+    var x = d3.scaleTime().range([0, width]),
+        y = d3.scaleLinear().range([height, 0]),
+        z = d3.scaleOrdinal(d3.schemeCategory10);
+
+    var line = d3.line()
+        .curve(d3.curveBasis)
+        .x(function(d){ return x(parseTime(d[0])); })
+        .y(function(d){ return y(d[2]); });
+
+    var parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S")
+    x.domain(d3.extent(data_list, function(d) { return d[0]; }));   // d3.extent: return the min/max using natural order
+    console.log(d3.extent(data_list, function(d) { return d[0]; }))
+    y.domain([
+        d3.min(data_list, function(item) { return item[2]; }),  // min increment
+        d3.max(data_list, function(item) { return item[2]; })
+    ])
+    console.log(d3.min(data_list, function(item) { return item[2]; }))
+    console.log(d3.max(data_list, function(item) { return item[2]; }))
+
+
+    g.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+    g.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y))
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("fill", "#000")
+        .text("涨幅/min")
+
+    g.append("path")
+        .attr("class", "line")
+        .attr("d", line(data_list))
+        .attr('stroke', z(0))
 
 }
 
@@ -53,4 +92,5 @@ window.onload = function()
 {
     console.log('onload')
     request_last_minutes(60, '吴宣仪');
+    build_inc_chart(wuxuanyi_sequence["data"].slice(1));
 }
