@@ -10,6 +10,7 @@ from flask import render_template
 import json
 
 from server.server_db import ServerDB
+from server import global_config
 
 
 db_path = os.path.abspath(os.path.join(os.getcwd(), './asia_vote.db'))
@@ -24,13 +25,27 @@ def main_page():
 @app.route('/last_minutes', methods=['GET'])
 def response_last_minuts():
     # print(request.args['minutes'], request.args['singer'])
-    name = request.args['singer']
-    minutes = int(request.args['minutes'])
+    # name = request.args['singer']
+    # print(request.args)
+    if 'minutes' in request.args:
+        minutes = int(request.args['minutes'])
+    else:
+        minutes = 60
 
-    query_results = server_db.get_per_minute_vote(singer_name=name, minutes=minutes)
+    if 'singer' in request.args:
+        singers_list = [request.args['singer']]
+    else:
+        singers_list = global_config.all_singlers
 
-    if len(query_results) > 0:
-        response = Response(json.dumps({"ok":1, "data":query_results, "message":"ok"}))
+    result_data_list = [] # each element is a dict {"name": , "list":[]}
+
+    for name in singers_list:
+        query_results = server_db.get_per_minute_vote(singer_name=name, minutes=minutes)
+        singer_item = {"name": name, "list": query_results}
+        result_data_list.append(singer_item)
+
+    if len(result_data_list) > 0:
+        response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:
         response = Response(json.dumps({"ok":-1, "data":[], "message":"not a valid query"}))
         # todo: log
@@ -45,10 +60,25 @@ def response_last_hours():
     name = request.args['singer']
     hours = int(request.args['hours'])
 
-    query_results = server_db.get_per_hour_vote(singer_name=name, hours=hours)
+    if 'hours' in request.args:
+        hours = int(request.args['hours'])
+    else:
+        hours = 48
 
-    if len(query_results) > 0:
-        response = Response(json.dumps({"ok":1, "data":query_results, "message":"ok"}))
+    if 'singer' in request.args:
+        singer_list = [request.args['singer']]
+    else:
+        singer_list = global_config.all_singlers
+
+    result_data_list = []
+
+    for name in singer_list:
+        query_results = server_db.get_per_hour_vote(singer_name=name, hours=hours)
+        singer_item = {"name": name, "list": query_results}
+        result_data_list.append(singer_item)
+
+    if len(result_data_list) > 0:
+        response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:
         response = Response(json.dumps({"ok":-1, "data":[], "message": "not a valid query"}))
         # todo: log
