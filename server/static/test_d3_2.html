@@ -1,133 +1,21 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>显示北京PM2.5的数值</title>
-<script src="../D3_JS/d3.min.js"></script>
-<script src="../D3_JS/d3.js"></script>
-<script type="text/javascript" src="BeiJingPM2_5.js" ></script>//引入json数据，看下面解释
-</head>
+
 <body>
 <div id = "svg"></div>
 <script>
- var data_DingLing = new Array(23);
- var data_DongSi = new Array(23);
- var data_TianTan = new Array(23);
- var data_NongZhanGuan = new Array(23);
- var data_GuCheng = new Array(23);
- const data_time = ["0:00","1:00","2:00","3:00","4:00","5:00","6:00","7:00"
-  ,"8:00","9:00","10:00","11:00","12:00","13:00","14:00"
-  ,"15:00","16:00","17:00","18:00","19:00","20:00","21:00"
-  ,"22:00","23:00"]
- var dingLing = 0;
- var dongsi = 0;
- var tiantan = 0;
- var nongzhanguan = 0;
- var gucheng = 0;
- var locationName = ["定陵","东四","天坛","农展馆","古城"];
- var data = [data_DingLing,data_DongSi,data_TianTan,data_NongZhanGuan,data_GuCheng];
+    function test(a)
+    {
+        if(a){
+            console.log(a)
+        }
+        else{
+            console.log('empty')
+        }
+    }
 
- var dataset = eval(beijing_PM2_5); //可以直接使用BeiJingPM2_5.js 中定义的json值了
-
-
-   //把各地 PM2.5 数据分别取出来
-for(var i=0; i<dataset.PM_data.length;i++){
-        //把csvData中的数值型数据变为整数型
-dataset.PM_data[i].PM2_5 = + dataset.PM_data[i].PM2_5;
-
-if(dataset.PM_data[i].jczname == "定陵"){
-data_DingLing[dingLing] = dataset.PM_data[i].PM2_5;
-dingLing++;
-}
-
-if(dataset.PM_data[i].jczname == "东四"){
-data_DongSi[dongsi] = dataset.PM_data[i].PM2_5;
-dongsi++;
-}
-
-if(dataset.PM_data[i].jczname == "天坛"){
-data_TianTan[tiantan] = dataset.PM_data[i].PM2_5;
-tiantan++;
-}
-
-if(dataset.PM_data[i].jczname == "农展馆"){
-data_NongZhanGuan[nongzhanguan] = dataset.PM_data[i].PM2_5;
-nongzhanguan++;
-}
-
-if(dataset.PM_data[i].jczname == "古城"){
-data_GuCheng[gucheng] = dataset.PM_data[i].PM2_5;
-gucheng++;
-}
-
-}
-//定义坐标轴
-const padding = {top:20,left:20,right:20,bottom:20};
-const height = 600;
-const width = 1200;
-const xAxisWidth = width - padding.left - padding.right;
-const yAxisWidth = height - padding.top - padding.bottom;
-//首先添加svg元素
-const svg = d3.select("#svg").append("svg").attr("width",width+40).attr("height",height+40);
-//设置坐标轴的比例尺
-const xScale = d3.scaleBand().domain(data_DingLing.map((o,i)=>i)).range([0,xAxisWidth]);
-const yScale = d3.scaleLinear().domain([0,
-d3.max([ d3.max(data_DingLing),d3.max(data_DongSi),d3.max(data_TianTan),d3.max(data_NongZhanGuan),d3.max(data_GuCheng)] ) + 20])
-.rangeRound([yAxisWidth,0]);
-const xAxis = d3.axisBottom(xScale).tickFormat(function(d){return data_time[d];});//可显示自己定义的标注，本例也可使用 tickFormat(function(d){return d+":00";})
-const yAxis = d3.axisLeft(yScale);
-
-const gy = svg.append('g').attr("transform","translate(" + (padding.left)*3 + "," + (height - padding.bottom - yAxisWidth) + ")");
-const gx = svg.append("g").attr("transform",`translate(${(padding.left)*3}, ${height - padding.bottom})`);
-//画x轴并加上标注
-gx.call(xAxis).append("text")
-           //.attr("class", "yAxislabel") //加不加class皆可
-           .attr("text-anchor", "start")
-           .attr("stroke","red")
-           .style("font-size","17px")
-.style("font-style","宋体")
-           .attr("x", width-padding.right*5)
-           .attr("y", padding.bottom*2)
-           .text(d=>"时间 / h");
-           //画y轴并加上标注
-gy.call(yAxis).append("text")
-           //.attr("class", "yAxislabel")
-           .attr("text-anchor", "start")
-           .attr("stroke","red")
-           .style("font-size","17px")
-.style("font-style","宋体")
-           .attr("x", (padding.left-5))
-           .attr("y", 40)
-           .text(d=>"PM2.5( ug/m³ )");
-// 获得随机颜色
-const color = d3.scaleOrdinal(d3.schemeCategory10);
-//定义折线
-const pathLine = d3.line().curve(d3.curveBasis).x((d,i)=>xScale(i) + padding.left + xScale.bandwidth()/2)
-         .y(d=>height - padding.bottom - (yScale(0) - yScale(d)));
-
-const labels = svg.append("g");
-//显示地名，颜色与折线是对应的
-labels.selectAll("text").data(locationName).enter().append("text")
-     .attr("stroke",(d,i)=>color(i))
-     .attr("transform",(d,i)=>"translate(0,170)" + `translate(${width-padding.right*5},${i*55})`)
-     .style("font-size","20px")
-     .text(d=>d);
-//画出各个地点对应的线，这里是用的比较笨的方法,因为没找到合适方法
-for(var i=0; i < data.length; i++){
-svg.append("path").attr("d",pathLine( data[i] )).attr("stroke",color(i))
-     .attr("stroke-width","4px").attr("fill","none")
-     .attr("transform",`translate(${(padding.left)*2},0)`);
-}
-
-//最下面加上一行标题
-const header = ["北京市 2013/2/1日 0:00--23:00 各景区 PM2.5"];
-const headers = svg.append("g");
-headers.selectAll("text").data(header).enter().append("text")
-     .attr("stroke","black")
-     .attr("transform",`translate(${width/3-padding.left*2},${height+30})`)
-     .style("font-size","25px")
-     .text(d=>d);
-
+    test(1)
+    test()
 </script>
 </body>
 </html>

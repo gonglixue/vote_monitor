@@ -27,7 +27,7 @@ class ServerDB(object):
         return self._calculate_increment_from_sequence(records.fetchall())
 
     def _calculate_increment_from_sequence(self, records_sequence):
-        if len(records_sequence) == 0:
+        if len(records_sequence) <= 1:
             return []
         start_i = 0
         # for start_i in range(0, len(records_sequence)):
@@ -42,7 +42,7 @@ class ServerDB(object):
             records_sequence[i] += (increment,)     # append an element to tuple
 
         records_sequence[start_i] += (-1, )
-        return records_sequence
+        return records_sequence[start_i+1:]
 
     def get_per_hour_vote(self, singer_name, hours=24):
         records = []
@@ -78,18 +78,25 @@ class ServerDB(object):
         return self._calculate_increment_from_sequence(records)
 
     def get_latest_vote(self, name_list):
+        '''
+        return the nearest recorded vote_num
+        :param name_list:
+        :return: [(name, vote_num), ...], time_str
+        '''
         records = []
         for name in name_list:
-            sql_str = "select * from %s where order by vote_time desc limit 1" % name
+            sql_str = "select * from %s order by vote_time desc limit 1" % name
             try:
-                record = self.c.execute(sql_str).fetchone()
+                record = self.c.execute(sql_str).fetchone() # tuple(vote_time, vote)
+                nearest_record_time = record[0]
+                record = (name, record[1])
             except Exception as e:
                 print(e)
-                record = None
+                record = (name, -1)
 
             records.append(record)
 
-        return records
+        return records, nearest_record_time
 
     def get_vote_given_gap(self, singer_name, gap_minutes=30, in_last_hours=12):
         records = []
@@ -130,6 +137,7 @@ class ServerDB(object):
 
 def test():
     server_db = ServerDB("../../asia_vote.db")
+    real_time_votes, nearest_record_time = server_db.get_latest_vote(['吴宣仪', '周洁琼'])
     time_last = 60
     test_results = server_db.test()
     inc_results_1 = server_db.get_per_hour_vote('吴宣仪', hours=time_last)
