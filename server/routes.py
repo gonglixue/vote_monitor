@@ -45,6 +45,8 @@ def response_last_minuts():
         result_data_list.append(singer_item)
 
     if len(result_data_list) > 0:
+        # TODO
+        # sort result by vote_num
         response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:
         response = Response(json.dumps({"ok":-1, "data":[], "message":"not a valid query"}))

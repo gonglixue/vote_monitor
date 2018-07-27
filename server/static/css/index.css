@@ -7,3 +7,16 @@
     stroke: steelblue;
     stroke-width: 1.5px;
 }
+
+.tooltip{
+    font-family:simsun;
+    font-size:16px;
+    width:120px;
+    height:auto;
+    position:absolute;
+    text-align:center;
+    border-style:solid;
+    border-width:1px;
+    background: beige;
+    border-radius: 4px;
+}
