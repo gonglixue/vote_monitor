@@ -47,6 +47,7 @@ def response_last_minuts():
     if len(result_data_list) > 0:
         # TODO
         # sort result by vote_num
+        result_data_list.sort(key=lambda x: -x["list"][-1][1])
         response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:
         response = Response(json.dumps({"ok":-1, "data":[], "message":"not a valid query"}))
@@ -77,6 +78,7 @@ def response_last_hours():
         result_data_list.append(singer_item)
 
     if len(result_data_list) > 0:
+        result_data_list.sort(key=lambda x: -x["list"][-1][1])
         response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:
         response = Response(json.dumps({"ok":-1, "data":[], "message": "not a valid query"}))
@@ -111,9 +113,10 @@ def response_per_gap_in_last_hours():
         result_data_list.append(singer_item)
 
     if len(result_data_list) > 0:
-        response = Response(json.dumps({"ok":1, "data":query_results, "message":"ok"}))
+        result_data_list.sort(key=lambda x: -x["list"][-1][1])
+        response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:
-        response = Response(json.dumps({"ok":-1, "data":query_results, "message":"not a valid query"}))
+        response = Response(json.dumps({"ok":-1, "data":[], "message":"not a valid query"}))
 
     response.status_code = 200
     response.headers['Content-Type'] = 'text/json'
@@ -127,6 +130,7 @@ def response_real_time():
     # query_results: [(name, vote_num), ...]
 
     if len(query_results) > 0:
+        query_results.sort(key = lambda x: -x[1])
         response = Response(json.dumps({"ok":1, "data":query_results}))
     else:
         response = Response(json.dumps({"ok":-1, "data":[], "message": "not a valid query"}))
