@@ -115,6 +115,54 @@ function build_inc_chart(singers_data, filters)
 
 }
 
+function delete_name_from_filters(name)
+{
+    var name_ind = global_name_filter.indexOf(name)
+    if(name_ind > -1)
+        global_name_filter.splice(name_ind, 1)
+    else
+    {
+        // does not exist, do nothing
+    }
+}
+
+function add_name_to_filters(name)
+{
+    var name_ind = global_name_filter.indexOf(name)
+    if(name_ind > -1)
+    {
+        // already exists, do nothing
+    }
+    else{
+        // add element to array
+        global_name_filter.push(name)
+    }
+}
+
+function name_checkbox_onchange(event)
+{
+    if(event.srcElement.checked)
+    {
+        add_name_to_filters(event.srcElement.value)
+    }
+    else{
+        delete_name_from_filters(event.srcElement.value)
+    }
+
+    // rerender chart
+    // TODO
+}
+
+function bind_checkbox_listener()
+{
+    var checkboxes = document.getElementsByName("display")
+
+    for(var i=0; i<checkboxes.length; i++)
+    {
+        checkboxes[i].onchange = name_checkbox_onchange
+    }
+}
+
 window.onload = function()
 {
     console.log('onload')
