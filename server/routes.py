@@ -154,7 +154,7 @@ def reponse_wx():
     # response.headers['Content-Type'] = 'text/json'
     # return response
     if len(request.args) == 0:
-        return return "hello, this is handle view"
+        return("hello, this is handle view")
 
     signature = request.args['signature']
     timestamp = request.args['timestamp']
