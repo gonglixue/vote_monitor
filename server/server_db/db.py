@@ -137,19 +137,22 @@ class ServerDB(object):
 
 def test():
     server_db = ServerDB("../../asia_vote.db")
-    real_time_votes, nearest_record_time = server_db.get_latest_vote(['吴宣仪', '周洁琼'])
+    query_names = ['吴宣仪', '周洁琼', '孟美岐']
+    real_time_votes, nearest_record_time = server_db.get_latest_vote(query_names)
     time_last = 60
     test_results = server_db.test()
     inc_results_1 = server_db.get_per_hour_vote('吴宣仪', hours=time_last)
     inc_results_2 = server_db.get_per_hour_vote('周洁琼', hours=time_last)
+    inc_results_3 = server_db.get_per_hour_vote('孟美岐', hours=time_last)
     # inc_results = server_db.calculate_increment_from_sequence(results)
 
     counts = min(len(inc_results_1), len(inc_results_2))
     for ind in range(counts):
         item_1 = inc_results_1[ind]
         item_2 = inc_results_2[ind]
-        print('吴宣仪: %s %d票（涨幅:%5d/hour）\t\t 周洁琼:%s %d票（涨幅:%d/hour）' %
-              (item_1[0], item_1[1], item_1[2], item_2[0], item_2[1], item_2[2]))
+        item_3 = inc_results_3[ind]
+        print('吴宣仪: %s %d票（涨幅:%5d/hour）\t\t 周洁琼:%s %d票（涨幅:%d/hour）\t\t 孟美岐:%s %d票（涨幅:%d/hour）' %
+              (item_1[0], item_1[1], item_1[2], item_2[0], item_2[1], item_2[2], item_3[0], item_3[1], item_e[2]))
 
     # for item in inc_results:
     #     print('%s \t 票数：%d \t %d涨幅:%d' % (item[0], item[1], 30, item[2]))
