@@ -151,7 +151,7 @@ def test():
         item_1 = inc_results_1[ind]
         item_2 = inc_results_2[ind]
         item_3 = inc_results_3[ind]
-        print('吴宣仪: %s %d票（涨幅:%5d/hour）\t\t 周洁琼:%s %d票（涨幅:%d/hour）\t\t 孟美岐:%s %d票（涨幅:%d/hour）' %
+        print('吴宣仪: %s %8d票（涨幅:%5d/hour）\t 周洁琼:%s %8d票（涨幅:%5d/hour）\t 孟美岐:%s %8d票（涨幅:%5d/hour）' %
               (item_1[0], item_1[1], item_1[2], item_2[0], item_2[1], item_2[2], item_3[0], item_3[1], item_3[2]))
 
     # for item in inc_results:
