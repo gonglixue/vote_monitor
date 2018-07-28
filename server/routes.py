@@ -1,4 +1,5 @@
 import os
+import hashlib
 
 from server import app
 
@@ -145,13 +146,33 @@ def reponse_wx():
     :return: {"vote_num": real_time_vote, "inc_minite": inc_minite, "inc_hour":inc_hour, "rank": rand}
     '''
 
-    singer_name = request.args['singer']
-    singer_info = server_db.get_vote_info_given_name(singer_name)
-    print(singer_info)
-    response = Response(json.dumps({"ok":1, "data":singer_info, "message":"ok"}))
-    response.status_code = 200
-    response.headers['Content-Type'] = 'text/json'
-    return response
+    # singer_name = request.args['singer']
+    # singer_info = server_db.get_vote_info_given_name(singer_name)
+    # print(singer_info)
+    # response = Response(json.dumps({"ok":1, "data":singer_info, "message":"ok"}))
+    # response.status_code = 200
+    # response.headers['Content-Type'] = 'text/json'
+    # return response
+    if len(request.args) == 0:
+        return return "hello, this is handle view"
+
+    signature = request.args['signature']
+    timestamp = request.args['timestamp']
+    nonce = request.args['nonce']
+    echostr = request.args['echostr']
+    token = 'log2018'
+
+    list = [token, timestamp, nonce]
+    list.sort()
+    sha1 = hashlib.sha1()
+    map(sha1.update, list)
+    hashcode = sha1.hexdigest()
+    print("handle/Get:", hashcode, signature)
+    if hashcode == signature:
+        return echostr
+    else:
+        return ""
+
 
 
 
