@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+from server import global_config
 
 class ServerDB(object):
     def __init__(self, db_addr):
@@ -130,6 +131,60 @@ class ServerDB(object):
 
         return self._calculate_increment_from_sequence(records)
 
+    # weixin interface
+    def get_vote_info_given_name(self, singer_name):
+        singer_info = {
+            "vote_num": -1,
+            "rank": -1,
+            "inc_minute": -1,
+            "inc_hour": -1
+        }
+        one_minute_ago_vote_num = -1
+        one_hour_ago_vote_num = -1
+
+        all_vote_num = []
+        all_singers = global_config.all_singers
+        for one_name in all_singers:
+            vote_num_sql = "select vote_num from %s order by vote_num desc limit 2" % one_name
+            try:
+                sql_result = self.c.execute(vote_num_sql)
+                vote_num = sql_result.fetchone()[0]    # fetchone return tuple
+                # print(vote_num)
+                all_vote_num.append({"name": one_name, "vote_num": vote_num})
+                if one_name == singer_name:
+                    singer_info["vote_num"] = vote_num
+                    one_minute_ago_vote_num = sql_result.fetchone()[0]
+                    # print("current", vote_num)
+                    # print("last", one_minute_ago_vote_num)
+            except Exception as e:
+                print(e)
+
+        all_vote_num.sort(key=lambda x: -x["vote_num"])
+        print(all_vote_num)
+        rank = -1
+        for i in range(len(all_vote_num)):
+            item = all_vote_num[i]
+            if item["name"] == singer_name:
+                singer_info["rank"] = i+1
+                break
+
+        current_time = datetime.datetime.now()
+        one_hour_ago = current_time - datetime.timedelta(hours=1)
+        query_time_str = one_hour_ago.strftime("%Y-%m-%d %H:%M:%S")
+        sql_str = "select vote_num from %s where vote_time>='%s' order by vote_time limit 1" % (singer_name, query_time_str)
+        try:
+            sql_result = self.c.execute(sql_str).fetchone()[0]
+            one_hour_ago_vote_num = sql_result
+        except Exception as e:
+            print(e)
+
+        singer_info["inc_minute"] = singer_info["vote_num"] - one_minute_ago_vote_num
+        singer_info["inc_hour"] = singer_info["vote_num"] - one_hour_ago_vote_num
+
+        return singer_info
+
+
+
     def test(self):
         sql_str = "select * from 吴宣仪 where vote_time>='2018-07-20 16:18:00' order by vote_time limit 100 "
         results = self.c.execute(sql_str)
@@ -139,7 +194,7 @@ def test():
     server_db = ServerDB("../../asia_vote.db")
     query_names = ['吴宣仪', '周洁琼', '孟美岐']
     real_time_votes, nearest_record_time = server_db.get_latest_vote(query_names)
-    time_last = 60
+    time_last = 10
     test_results = server_db.test()
     inc_results_1 = server_db.get_per_hour_vote('吴宣仪', hours=time_last)
     inc_results_2 = server_db.get_per_hour_vote('周洁琼', hours=time_last)
@@ -154,6 +209,8 @@ def test():
         print('吴宣仪: %s %8d票（涨幅:%5d/hour）\t 周洁琼:%s %8d票（涨幅:%5d/hour）\t 孟美岐:%s %8d票（涨幅:%5d/hour）' %
               (item_1[0], item_1[1], item_1[2], item_2[0], item_2[1], item_2[2], item_3[0], item_3[1], item_3[2]))
 
+    singer_info = server_db.get_vote_info_given_name('王菊')
+    print(singer_info)
     # for item in inc_results:
     #     print('%s \t 票数：%d \t %d涨幅:%d' % (item[0], item[1], 30, item[2]))
 
