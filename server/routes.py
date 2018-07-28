@@ -164,9 +164,9 @@ def reponse_wx():
 
     list = [token, timestamp, nonce]
     list.sort()
-    sha1 = hashlib.sha1()
-    map(sha1.update, list)
-    hashcode = sha1.hexdigest()
+    tmp_str = ''.join(list)
+
+    hashcode = hashlib.sha1(tmp_str).hexdigest()
     print("handle/Get:", hashcode, signature)
     if hashcode == signature:
         return echostr
