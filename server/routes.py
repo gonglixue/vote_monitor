@@ -139,6 +139,21 @@ def response_real_time():
     response.headers['Content-Type'] = 'text/json'
     return response
 
+@app.route('/wx', methods=['GET'])
+def reponse_wx():
+    '''
+    :return: {"vote_num": real_time_vote, "inc_minite": inc_minite, "inc_hour":inc_hour, "rank": rand}
+    '''
+
+    singer_name = request.args['singer']
+    singer_info = server_db.get_vote_info_given_name(singer_name)
+    print(singer_info)
+    response = Response(json.dumps({"ok":1, "data":singer_info, "message":"ok"}))
+    response.status_code = 200
+    response.headers['Content-Type'] = 'text/json'
+    return response
+
+
 
 if __name__ == '__main__':
     print("routes")
