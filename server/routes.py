@@ -47,7 +47,6 @@ def response_last_minuts():
     if len(result_data_list) > 0:
         # TODO
         # sort result by vote_num
-        print(result_data_list)
         result_data_list.sort(key=lambda x: -x["list"][-1][1])
         response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:

@@ -4,7 +4,7 @@ import datetime
 class ServerDB(object):
     def __init__(self, db_addr):
         self.addr = db_addr
-        self.conn = sqlite3.connect(self.addr)
+        self.conn = sqlite3.connect(self.addr, check_same_thread=False)
         self.c = self.conn.cursor()
 
         self._max_limit = 200
