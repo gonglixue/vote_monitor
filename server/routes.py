@@ -12,6 +12,7 @@ import json
 
 from server.server_db import ServerDB
 from server import global_config
+from utils import wx_receive, wx_reply
 
 
 db_path = os.path.abspath(os.path.join(os.getcwd(), './asia_vote.db'))
@@ -182,7 +183,21 @@ def response_wx():
 
 @app.route('/wx', methods=['POST'])
 def response_wx_post():
-    return "post"
+    # try:
+    receive_raw_data = request.data
+    receive_wx_msg = wx_receive.parse_xml(receive_raw_data)
+    if isinstance(receive_wx_msg, wx_receive.WxMsg) and receive_wx_msg.MsgType == 'text':
+        toUser = receive_wx_msg.FromUserName    # reply to user
+        fromUser = receive_wx_msg.ToUserName    # reply from user
+        content = "test"
+        reply_wx_msg = wx_reply.TextReply(toUserName=toUser, fromUserName=fromUser, content=content)
+
+        return reply_wx_msg.send()
+    else:
+        return "success"
+
+    # except Exception as e:
+    #     print(e)
 
 
 if __name__ == '__main__':

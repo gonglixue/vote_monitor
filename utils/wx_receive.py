@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 def parse_xml(wx_data):
-    if len(web_data) == 0:
+    if len(wx_data) == 0:
         return None
 
     xmlData = ET.fromstring(wx_data)
@@ -22,11 +22,13 @@ class WxMsg(object):
 
 class TextMsg(WxMsg):
     def __init__(self, xmlData):
-        WxMsg.__init__(xmlData)
+        super(TextMsg, self).__init__(xmlData)
+
         self.Content = xmlData.find('Content').text.encode('utf-8') # string content
 
 class ImageMsg(WxMsg):
     def __init__(self, xmlData):
-        WxMsg.__init__(xmlData)
+        super(ImageMsg, self).__init__(xmlData)
+
         self.PicUrl = xmlData.find('PicUrl').text
         self.MediaId = xmlData.find('MediaId').text
