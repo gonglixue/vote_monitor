@@ -141,7 +141,7 @@ def response_real_time():
     return response
 
 @app.route('/wx', methods=['GET'])
-def reponse_wx():
+def response_wx():
     '''
     :return: {"vote_num": real_time_vote, "inc_minite": inc_minite, "inc_hour":inc_hour, "rank": rand}
     '''
@@ -180,7 +180,9 @@ def reponse_wx():
     else:
         return ""
 
-
+@app.route('/wx', methods=['POST'])
+def response_wx_post():
+    return "post"
 
 
 if __name__ == '__main__':
