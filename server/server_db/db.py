@@ -154,8 +154,8 @@ class ServerDB(object):
                 if one_name == singer_name:
                     singer_info["vote_num"] = vote_num
                     one_minute_ago_vote_num = sql_result.fetchone()[0]
-                    # print("current", vote_num)
-                    # print("last", one_minute_ago_vote_num)
+                    print("current", vote_num)
+                    print("last", one_minute_ago_vote_num)
             except Exception as e:
                 print(e)
 
