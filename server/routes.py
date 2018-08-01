@@ -191,7 +191,7 @@ def response_wx_post():
     if isinstance(receive_wx_msg, wx_receive.WxMsg) and receive_wx_msg.MsgType == 'text':
         toUser = receive_wx_msg.FromUserName    # reply to user
         fromUser = receive_wx_msg.ToUserName    # reply from user
-        content = "test"
+        content = receive_wx_msg.Content
         reply_wx_msg = wx_reply.TextReply(toUserName=toUser, fromUserName=fromUser, content=content)
 
         response = Response(reply_wx_msg.send())
