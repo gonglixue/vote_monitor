@@ -17,7 +17,7 @@ class TextReply(WxReply):
     def send(self):
         XmlForm = """
         <xml>
-        <TuUserName><![CDATA[{ToUserName}]]></ToUserName>
+        <ToUserName><![CDATA[{ToUserName}]]></ToUserName>
         <FromUserName><![CDATA[{FromUserName}]]></FromUserName>
         <CreateTime>{CreateTime}</CreateTime>
         <MsgType><![CDATA[text]]></MsgType>
