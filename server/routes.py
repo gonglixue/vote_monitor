@@ -146,7 +146,7 @@ def response_wx():
     '''
     :return: {"vote_num": real_time_vote, "inc_minite": inc_minite, "inc_hour":inc_hour, "rank": rand}
     '''
-
+    print('GET handle')
     # singer_name = request.args['singer']
     # singer_info = server_db.get_vote_info_given_name(singer_name)
     # print(singer_info)
@@ -185,6 +185,8 @@ def response_wx():
 def response_wx_post():
     # try:
     receive_raw_data = request.data
+    print('post handle')
+    print(receive_raw_data)
     receive_wx_msg = wx_receive.parse_xml(receive_raw_data)
     if isinstance(receive_wx_msg, wx_receive.WxMsg) and receive_wx_msg.MsgType == 'text':
         toUser = receive_wx_msg.FromUserName    # reply to user
