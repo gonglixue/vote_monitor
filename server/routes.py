@@ -194,7 +194,7 @@ def response_wx_post():
 
         rec_content = receive_wx_msg.Content
 
-        if content in global_config.all_singers:
+        if rec_content in global_config.all_singers:
             singer_info = server_db.get_vote_info_given_name(singer_name=rec_content)
             content = rec_content + ":" + "[排名:{rank}] [实时票数:{vote_num}] [近1分钟涨幅:{inc_minute}] [近1小时涨幅:{inc_hour}]".format(**singer_info)
         else:
