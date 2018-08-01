@@ -29,7 +29,7 @@ class FemaleList(object):
             return
 
         try:
-            female_card_list = all_cards_list[1]["card_group"]
+            female_card_list = all_cards_list[2]["card_group"]
         except Exception:
             with open("faile.json", "w") as f:
                 f.write(str(json_dict))
