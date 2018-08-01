@@ -171,10 +171,12 @@ class ServerDB(object):
         current_time = datetime.datetime.now()
         one_hour_ago = current_time - datetime.timedelta(hours=1)
         query_time_str = one_hour_ago.strftime("%Y-%m-%d %H:%M:%S")
-        sql_str = "select vote_num from %s where vote_time>='%s' order by vote_time limit 1" % (singer_name, query_time_str)
+        sql_str = "select vote_time, vote_num from %s where vote_time>='%s' order by vote_time limit 1" % (singer_name, query_time_str)
         try:
-            sql_result = self.c.execute(sql_str).fetchone()[0]
-            one_hour_ago_vote_num = sql_result
+            sql_result = self.c.execute(sql_str).fetchone()
+            one_hour_ago_vote_num = sql_result[1]
+            nearest_one_hour_ago_time = sql_result[0]
+            print("time", nearest_one_hour_ago_time)
         except Exception as e:
             print(e)
 
@@ -209,7 +211,7 @@ def test():
         print('吴宣仪: %s %8d票（涨幅:%5d/hour）\t 周洁琼:%s %8d票（涨幅:%5d/hour）\t 孟美岐:%s %8d票（涨幅:%5d/hour）' %
               (item_1[0], item_1[1], item_1[2], item_2[0], item_2[1], item_2[2], item_3[0], item_3[1], item_3[2]))
 
-    singer_info = server_db.get_vote_info_given_name('王菊')
+    singer_info = server_db.get_vote_info_given_name('吴宣仪')
     print(singer_info)
     # for item in inc_results:
     #     print('%s \t 票数：%d \t %d涨幅:%d' % (item[0], item[1], 30, item[2]))

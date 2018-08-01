@@ -191,8 +191,15 @@ def response_wx_post():
     if isinstance(receive_wx_msg, wx_receive.WxMsg) and receive_wx_msg.MsgType == 'text':
         toUser = receive_wx_msg.FromUserName    # reply to user
         fromUser = receive_wx_msg.ToUserName    # reply from user
-        content = receive_wx_msg.Content
-        reply_wx_msg = wx_reply.TextReply(toUserName=toUser, fromUserName=fromUser, content=content)
+
+        rec_content = receive_wx_msg.Content
+
+        if content in global_config.all_singers:
+            singer_info = server_db.get_vote_info_given_name(singer_name=rec_content)
+            content = rec_content + ":" + "[排名:{rank}] [实时票数:{vote_num}] [近1分钟涨幅:{inc_minute}] [近1小时涨幅:{inc_hour}]".format(**singer_info)
+        else:
+            content = rec_content
+            reply_wx_msg = wx_reply.TextReply(toUserName=toUser, fromUserName=fromUser, content=content)
 
         response = Response(reply_wx_msg.send())
         response.status_code = 200
