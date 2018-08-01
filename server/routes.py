@@ -194,6 +194,10 @@ def response_wx_post():
         content = "test"
         reply_wx_msg = wx_reply.TextReply(toUserName=toUser, fromUserName=fromUser, content=content)
 
+        response = Response(reply_wx_msg.send())
+        response.status_code = 200
+        # response.headers['Content-Type'] = 'application/xml'
+        response.content_type = 'application/xml'
         return reply_wx_msg.send()
     else:
         return "success"
@@ -201,6 +205,12 @@ def response_wx_post():
     # except Exception as e:
     #     print(e)
 
+@app.route('/test', methods=['POST'])
+def response_test():
+    response = Response('<hello>aaa</hello>')
+    response.content_type = 'application/xml'
+    # response.headers['Content-Type'] = 'application/xml'
+    return response
 
 if __name__ == '__main__':
     print("routes")
