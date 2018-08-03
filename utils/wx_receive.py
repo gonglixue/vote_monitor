@@ -24,7 +24,7 @@ class TextMsg(WxMsg):
     def __init__(self, xmlData):
         super(TextMsg, self).__init__(xmlData)
 
-        self.Content = xmlData.find('Content').text.encode('utf-8') # string content
+        self.Content = xmlData.find('Content').text # string content
 
 class ImageMsg(WxMsg):
     def __init__(self, xmlData):

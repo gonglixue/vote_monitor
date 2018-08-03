@@ -5,3 +5,5 @@ response.json
 *.db
 __pycache__/
 logs/
+*.out
+*.pyc
