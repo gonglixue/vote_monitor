@@ -8,6 +8,7 @@ global_all_names = ['吴宣仪', '孟美岐', 'Yamy', '周洁琼', '鞠婧祎', 
 global_name_filter = ['吴宣仪', '孟美岐', 'Yamy', '周洁琼', '鞠婧祎']
 global_inc_chart_update_interface = undefined;
 
+// line chart with tooltips reference: http://bl.ocks.org/mccannf/1629644
 
 function find_singer_from_response_data(name, response_data)
 {
@@ -88,7 +89,7 @@ function build_inc_chart(singers_data, filters)
         z = d3.scaleOrdinal(d3.schemeCategory10);
 
     var line = d3.line()
-        .curve(d3.curveBasis)
+        // .curve(d3.curveBasis)
         .x(function(d){ console.log("x", parseTime(d[0]), x(parseTime(d[0]))); return x(parseTime(d[0])); })
         .y(function(d){ console.log("y", d[2]); return y(d[2]); });
 
@@ -128,28 +129,53 @@ function build_inc_chart(singers_data, filters)
     singer.append("path")
         .attr("class", "line")
         .attr("d", function(d) { return line(d["list"]); })
-        .style("stroke", function(d) { return z(d["id"]); })
-        .on("mouseover", function(d){
-            var x = d3.event.pageX+8;
-            var y = d3.event.pageY;
+        .style("stroke", function(d) { return z(d["id"]); });
+        // .on("mouseover", function(d){
+        //     var x = d3.event.pageX+8;
+        //     var y = d3.event.pageY;
+        //
+        //     svg.append("text")
+        //         .attr("id", "tooltip")
+        //         .attr("x", x)
+        //         .attr("y", y)
+        //         .attr("text-anchor", "middle")
+        //         .attr("font-family", "sans-setif")
+        //         .attr("font-size", "11px")
+        //         .attr("fill", "black")
+        //         .text(d["name"])
+        //     console.log(d3.event)
+        //     console.log("move over")
+        // })
+        // .on("mouseout", function(d){
+        //     d3.select("#tooltip").remove();
+        //     console.log("move out")
+        // });
 
-            svg.append("text")
-                .attr("id", "tooltip")
-                .attr("x", x)
-                .attr("y", y)
-                .attr("text-anchor", "middle")
-                .attr("font-family", "sans-setif")
-                .attr("font-size", "11px")
-                .attr("fill", "black")
-                .text(d["name"])
-            console.log(d3.event)
-            console.log("move over")
-        })
-        .on("mouseout", function(d){
-            d3.select("#tooltip").remove();
-            console.log("move out")
-        });
+    for(var i=0; i<singers_data.length; i++)
+    {
+        single_singer = singers_data[i]
 
+        // var dots_group = g.append("g")
+        //             .attr("class", "dots-group")
+        //             .attr("id", "dots-"+single_singer["name"])
+        // dots_group.selectAll("circle")
+        //     .data(single_singer["list"])
+        //     .enter()
+        //     .append('circle')
+        //     .attr("cx", function(d) { return x(parseTime(d[0])); })
+        //     .attr("cy", function(d) { return y(d[2]); })
+        //     .attr("r", "3px")
+        //     .attr("fill", "white")
+        //     .attr("stroke", function(d) { return z(single_singer["id"]); })
+        //     .attr("stroke-width", "2px")
+        //     .on("mouseover", function(d){
+        //
+        //     })
+        //     .on("mouseout", function(d){
+        //
+        //     })
+        AddDotsGroupForSinger(single_singer);
+    }
 
     // legend
     var legend = svg.selectAll(".legend")
@@ -176,6 +202,28 @@ function build_inc_chart(singers_data, filters)
             return d["name"];
         })
 
+    function AddDotsGroupForSinger(singer_item)
+    {
+        var dots_group = g.append("g")
+            .attr("class", "dots-group")
+            .attr("id", "dots-"+singer_item["name"])
+        dots_group.selectAll("circle")
+            .data(singer_item["list"])
+            .enter()
+            .append('circle')
+            .attr("cx", function(d) { return x(parseTime(d[0])); })
+            .attr("cy", function(d) { return y(d[2]); })
+            .attr("r", "3px")
+            .attr("fill", "white")
+            .attr("stroke", function(d) { return z(singer_item["id"]); })
+            .attr("stroke-width", "2px")
+            .on("mouseover", function(d){
+
+            })
+            .on("mouseout", function(d){
+
+            })
+    }
 
     function Update()
     {
@@ -188,11 +236,13 @@ function build_inc_chart(singers_data, filters)
                 .attr("class", "line")
                 .attr("d", line(singer_item["list"]))
                 .style("stroke", z(singer_item["id"]))
+            AddDotsGroupForSinger(singer_item);
         }
         this.delete_path = function delete_path(singer_item)
         {
             var svg = d3.select("#inc-chart");
             svg.select("#singer-" + singer_item["name"]).remove();
+            svg.select("#dots-"+singer_item["name"]).remove()
         }
     }
 
@@ -243,7 +293,7 @@ window.onload = function()
 {
     console.log('onload')
 
-    request_last_minutes();
+    /request_last_minutes();
     // global_inc_chart_update_interface = build_inc_chart(multi_series_inc_data["data"], global_name_filter);
     bind_checkbox_listener()
 }
