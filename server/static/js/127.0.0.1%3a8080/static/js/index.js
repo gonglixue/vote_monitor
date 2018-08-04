@@ -306,7 +306,7 @@ window.onload = function()
 {
     console.log('onload')
 
-     request_last_minutes();
-    // global_inc_chart_update_interface = build_inc_chart(multi_series_inc_data["data"], global_name_filter);
+    // request_last_minutes();
+    global_inc_chart_update_interface = build_inc_chart(multi_series_inc_data["data"], global_name_filter);
     bind_checkbox_listener()
 }
