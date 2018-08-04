@@ -214,14 +214,30 @@ function build_inc_chart(singers_data, filters)
             .attr("cx", function(d) { return x(parseTime(d[0])); })
             .attr("cy", function(d) { return y(d[2]); })
             .attr("r", "3px")
-            .attr("fill", "white")
-            .attr("stroke", function(d) { return z(singer_item["id"]); })
-            .attr("stroke-width", "2px")
-            .on("mouseover", function(d){
+            .attr("fill", function(d) { return z(singer_item["id"]); })
+            // .attr("stroke", function(d) { return z(singer_item["id"]); })
+            // .attr("stroke-width", "2px")
+            .on("mouseover", function(){
+                // zoom dot
+                console.log("moveover dot")
+                d3.select(this)
+                    .attr("r", "5px")
+                    .attr("stroke", function(d){return z(singer_item["id"])})
+                    .attr("stroke-opacity", 0.5)
+                    .attr("stroke-width", "2px")
+                // TODO: draw horizontal line
+
+                // TODO: tooltip
 
             })
             .on("mouseout", function(d){
+                console.log("moveout dot")
+                d3.select(this)
+                    .attr("r", "3px")
+                    .attr("stroke-opacity", 1.0)
+                // TODO: remove line
 
+                // TODO: remove tooltip
             })
     }
 
@@ -293,7 +309,7 @@ window.onload = function()
 {
     console.log('onload')
 
-    /request_last_minutes();
-    // global_inc_chart_update_interface = build_inc_chart(multi_series_inc_data["data"], global_name_filter);
+    // request_last_minutes();
+    global_inc_chart_update_interface = build_inc_chart(multi_series_inc_data["data"], global_name_filter);
     bind_checkbox_listener()
 }
