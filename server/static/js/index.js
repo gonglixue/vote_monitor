@@ -214,8 +214,10 @@ function build_inc_chart(singers_data, filters)
                     .duration(200)
                     .style("opacity", 0.8)
                     .style("display", "block");
-                div.html("<p class='tooltip-time'>" + d[0] + "</p>" + "<p>票数：<span>" + parseInt(d[1]).toLocaleString() + "</span></p>"
-                    + "<p>每分钟涨幅：<span>" + parseInt(d[2]).toLocaleString() + "</span></p>")
+                div.html("<p class='tooltip-time'>" + d[0] + "</p>" + "<p class='tooltip-name'>" + singer_item["name"] + "</p>"
+                    + "<p>票数：<span>" + parseInt(d[1]).toLocaleString() + "</span></p>"
+                    + "<p>每分钟涨幅：<span>" + parseInt(d[2]).toLocaleString()
+                    + "</span></p>" + "<p>排名：<span>" + singer_item["rank"] + "</span></p>")
                     .style("left", (d3.event.pageX + 4) + "px")
                     .style("top", (d3.event.pageY - 60) + "px");
 

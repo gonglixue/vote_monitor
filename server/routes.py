@@ -47,9 +47,10 @@ def response_last_minuts():
         result_data_list.append(singer_item)
 
     if len(result_data_list) > 0:
-        # TODO
         # sort result by vote_num
         result_data_list.sort(key=lambda x: -x["list"][-1][1])
+        for i in range(len(result_data_list)):
+            result_data_list[i]["rank"] = i+1
         response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:
         response = Response(json.dumps({"ok":-1, "data":[], "message":"not a valid query"}))
@@ -81,6 +82,8 @@ def response_last_hours():
 
     if len(result_data_list) > 0:
         result_data_list.sort(key=lambda x: -x["list"][-1][1])
+        for i in range(len(result_data_list)):
+            result_data_list[i]["rank"] = i+1
         response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:
         response = Response(json.dumps({"ok":-1, "data":[], "message": "not a valid query"}))
@@ -116,6 +119,9 @@ def response_per_gap_in_last_hours():
 
     if len(result_data_list) > 0:
         result_data_list.sort(key=lambda x: -x["list"][-1][1])
+        for i in range(len(result_data_list)):
+            result_data_list[i]["rank"] = i+1
+
         response = Response(json.dumps({"ok":1, "data":result_data_list, "message":"ok"}))
     else:
         response = Response(json.dumps({"ok":-1, "data":[], "message":"not a valid query"}))

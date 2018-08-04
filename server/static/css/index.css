@@ -38,6 +38,10 @@
 .tooltip .tooltip-time{
     font-size: 8px;
 }
+.tooltip .tooltip-name{
+    color: orangered;
+    font-weight: bold;
+}
 
 .data-dot-outline {
 
