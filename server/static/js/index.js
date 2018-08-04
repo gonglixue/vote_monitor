@@ -213,10 +213,11 @@ function build_inc_chart(singers_data, filters)
                 div.transition()
                     .duration(200)
                     .style("opacity", 0.8)
+                    .style("display", "block");
                 div.html("<p class='tooltip-time'>" + d[0] + "</p>" + "<p>票数：<span>" + parseInt(d[1]).toLocaleString() + "</span></p>"
                     + "<p>每分钟涨幅：<span>" + parseInt(d[2]).toLocaleString() + "</span></p>")
                     .style("left", (d3.event.pageX + 4) + "px")
-                    .style("top", (d3.event.pageY - 60) + "px")
+                    .style("top", (d3.event.pageY - 60) + "px");
 
             })
             .on("mouseout", function(d){
@@ -235,6 +236,10 @@ function build_inc_chart(singers_data, filters)
                 div.transition()
                     .duration(500)
                     .style("opacity", 0)
+                    .on("end", function(){
+                        d3.select(this).style("display", "none")
+                    })
+                // div.style("display", "none");
             })
     }
 
@@ -306,7 +311,7 @@ window.onload = function()
 {
     console.log('onload')
 
-     request_last_minutes();
+    request_last_minutes();
     // global_inc_chart_update_interface = build_inc_chart(multi_series_inc_data["data"], global_name_filter);
     bind_checkbox_listener()
 }
