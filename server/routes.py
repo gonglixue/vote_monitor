@@ -9,11 +9,14 @@ from flask import jsonify
 from flask import Response
 from flask import render_template
 import json
+import urllib
 
 from server.server_db import ServerDB
 from server import global_config
 from utils import wx_receive, wx_reply
+from utils import zhanjie
 
+import cv2
 
 db_path = os.path.abspath(os.path.join(os.getcwd(), './asia_vote.db'))
 server_db = ServerDB(db_path)     # absolute path
@@ -189,6 +192,10 @@ def response_wx():
 
 @app.route('/wx', methods=['POST'])
 def response_wx_post():
+    IMAGE_SAVE_PATH = '/home/images'
+    if not os.path.exists(IMAGE_SAVE_PATH):
+        print("mkdir images")
+        os.mkdir(IMAGE_SAVE_PATH)
     # try:
     receive_raw_data = request.data
     print('post handle')
@@ -205,7 +212,7 @@ def response_wx_post():
             content = rec_content + ":" + "[排名:{rank}] [实时票数:{vote_num}] [近1分钟涨幅:{inc_minute}] [近1小时涨幅:{inc_hour}]".format(**singer_info)
             reply_wx_msg = wx_reply.TextReply(toUserName=toUser, fromUserName=fromUser, content=content)
         else:
-            content = rec_content
+            content = '切割磁感线中...'
             reply_wx_msg = wx_reply.TextReply(toUserName=toUser, fromUserName=fromUser, content=content)
 
         response = Response(reply_wx_msg.send())
@@ -213,11 +220,39 @@ def response_wx_post():
         # response.headers['Content-Type'] = 'application/xml'
         response.content_type = 'application/xml'
         return reply_wx_msg.send()
+    elif isinstance(receive_wx_msg, wx_receive.WxMsg) and receive_wx_msg.MsgType == 'image':
+        toUser = receive_wx_msg.FromUserName
+        fromUser = receive_wx_msg.ToUserName
+        in_image_url = receive_wx_msg.PicUrl
+
+        connection = urllib.urlopen(in_image_url)
+        file_name = toUser + time.time() + ".jpg"
+        f = open(os.path.join(IMAGE_SAVE_PATH, file_name), 'wb')
+        f.write(connection.read())
+        f.close()
+        print("[{}] save image from {} to {}.".format(datetime.datetime.now().strtime("%Y-%m-%d %H:%M:%S"), toUser, file_name))
+
+        in_image = cv2.imread(os.path.join(IMAGE_SAVE_PATH, file_name))
+        out_image = zhanjie.zhanjie(in_image)
+        return_path = os.path.join(IMAGE_SAVE_PATH, file_name[0:-4]+"_return.jpg")
+        cv2.imwrite(os.path.join(return_path, out_image))
+
+        access_token = wx_reply.get_access_token()
+        # upload file
+        reply_wx_msg = wx_reply.ImageReply(toUserName=toUser, fromUserName=fromUser, MediaId='')
+        reply_wx_msg.upload_image(local_path=return_path, access_token=access_token)
+        
+        response = Response(reply_wx_msg.send())
+        response.status_code = 200
+        response.content_type = 'application/xml'
+        return reply_wx_msg.send()
+
     else:
         return "success"
 
     # except Exception as e:
     #     print(e)
+
 
 @app.route('/test', methods=['POST'])
 def response_test():

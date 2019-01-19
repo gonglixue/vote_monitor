@@ -29,6 +29,6 @@ class TextMsg(WxMsg):
 class ImageMsg(WxMsg):
     def __init__(self, xmlData):
         super(ImageMsg, self).__init__(xmlData)
-
+        print(xmlData)
         self.PicUrl = xmlData.find('PicUrl').text
         self.MediaId = xmlData.find('MediaId').text
